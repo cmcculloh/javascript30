@@ -1,25 +1,54 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import './App.css';
 
 import Key from './util/Key';
 
+const useEventListener = (eventName: string, handler: Function, element = document) => {
+  const savedHandler = useRef<Function>(handler);
+
+  useEffect(() => {
+    savedHandler.current = handler;
+  }, [handler]);
+
+  useEffect(() => {
+    // Object is a KeyboardEvent, but when I set it to that instead Typescript errors out on the addEventListener...
+    const eventListener = (event: Object) => savedHandler.current(event);
+    element.addEventListener(eventName, eventListener);
+
+    return () => {
+      element.removeEventListener(eventName, eventListener);
+    };
+  }, [eventName, element]);
+};
+
 const App = () => {
+  const keyUpHandler = ({ key }: { key: string }) => {
+    stopSound(key.toUpperCase());
+  };
+
+  useEventListener("keyup", keyUpHandler); 
+
+  const keyDownHandler = ({ key }: { key: string }) => {
+    playSound(key.toUpperCase());
+  };
+
+  useEventListener("keydown", keyDownHandler); 
+
   const [keys, setKeys] = useState([
-    { keyNumber: 65, letter: 'A', sound: 'clap', isPlaying: false },
-    { keyNumber: 83, letter: 'S', sound: 'hihat', isPlaying: false },
-    { keyNumber: 68, letter: 'D', sound: 'kick', isPlaying: false },
-    { keyNumber: 70, letter: 'F', sound: 'openhat', isPlaying: false },
-    { keyNumber: 71, letter: 'G', sound: 'boom', isPlaying: false },
-    { keyNumber: 72, letter: 'H', sound: 'ride', isPlaying: false },
-    { keyNumber: 74, letter: 'J', sound: 'snare', isPlaying: false },
-    { keyNumber: 75, letter: 'K', sound: 'tom', isPlaying: false },
-    { keyNumber: 76, letter: 'L', sound: 'tink', isPlaying: false }
+    { letter: 'A', sound: 'clap', isPlaying: false },
+    { letter: 'S', sound: 'hihat', isPlaying: false },
+    { letter: 'D', sound: 'kick', isPlaying: false },
+    { letter: 'F', sound: 'openhat', isPlaying: false },
+    { letter: 'G', sound: 'boom', isPlaying: false },
+    { letter: 'H', sound: 'ride', isPlaying: false },
+    { letter: 'J', sound: 'snare', isPlaying: false },
+    { letter: 'K', sound: 'tom', isPlaying: false },
+    { letter: 'L', sound: 'tink', isPlaying: false }
   ])
   
-  const playSound = (id: number) => {
+  const playSound = (letter: string) => {
     setKeys(keys.map(key => {
-      if (key.keyNumber === id) {
+      if (key.letter === letter) {
         key.isPlaying = true;
       }
 
@@ -27,17 +56,17 @@ const App = () => {
     }));
   }
 
-  const stopSound = (id: number) => setKeys(keys.map(key => key.keyNumber === id ? { ...key, isPlaying: false } : key))
+  const stopSound = (letter: string) => setKeys(keys.map(key => key.letter === letter ? { ...key, isPlaying: false } : key))
 
-  const toggleSound = (id: number) => {
-    const key = keys.find(key => key.keyNumber === id);
-    key?.isPlaying ? stopSound(id) : playSound(id);
+  const toggleSound = (letter: string) => {
+    const key = keys.find(key => key.letter === letter);
+    key?.isPlaying ? stopSound(letter) : playSound(letter);
   }
 
   return (
     <div className="keys">
       { keys.map(key => (
-        <Key key={key.keyNumber} keyNumber={key.keyNumber} letter={key.letter} sound={key.sound} isPlaying={key.isPlaying} toggleSound={toggleSound} />
+        <Key key={key.letter} letter={key.letter} sound={key.sound} isPlaying={key.isPlaying} toggleSound={toggleSound} />
       ))}
     </div>
   );

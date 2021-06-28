@@ -1,14 +1,13 @@
 interface KeyProps {
     isPlaying: boolean,
-    keyNumber: number,
     letter: string,
     toggleSound: Function,
     sound: string
 }
 
-const Key:React.FC<KeyProps> = ({ isPlaying, keyNumber, letter, toggleSound, sound }) => {
+const Key:React.FC<KeyProps> = ({ isPlaying, letter, toggleSound, sound }) => {
     return (
-    <div data-key={keyNumber} className={`key ${isPlaying ? 'playing' : ''}`} onClick={() => toggleSound(keyNumber)} >
+    <div data-key={letter} className={`key ${isPlaying ? 'playing' : ''}`} onClick={() => toggleSound(letter)} >
         <kbd>{letter}</kbd>
         <span className="sound">{sound}</span>
     </div>
