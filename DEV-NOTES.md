@@ -58,3 +58,5 @@ input {
 16. `App.js` -> `App.tsx`
 17. `index.js` -> `index.tsx`
 18. Copied `tsconfig.json` from [react-redux-typescript-guide playground](https://github.com/piotrwitek/react-redux-typescript-guide/blob/master/playground/tsconfig.json)
+19. Modified ReactDOM usage in `index.tsx`.
+20. Added an `Input`, `RangeInput`, and `ColorInput` inside of `App.tsx` (with Types)
